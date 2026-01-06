@@ -67,7 +67,7 @@
 
     createUserWithEmailAndPassword(auth, email, senha)
       .then(() => {
-        msg.innerText = "✅ Usuário registrado com sucesso!";
+       window.location.href = "dashboard.html";
       })
       .catch(error => {
         msg.innerText = "❌ " + error.message;
@@ -90,3 +90,4 @@
 
 </body>
 </html>
+
