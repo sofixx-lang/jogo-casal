@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard – Jogo do Casal 2026</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 40px;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      max-width: 600px;
+      border-radius: 8px;
+    }
+    h1 {
+      margin-top: 0;
+    }
+    .info {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🏆 Jogo do Casal 2026</h1>
+
+<div class="box">
+  <h2>Dashboard</h2>
+
+  <p class="info"><strong>Jogador:</strong> <span id="usuario">Carregando...</span></p>
+  <p class="info"><strong>Pontuação semanal:</strong> 0</p>
+  <p class="info"><strong>Pontuação mensal:</strong> 0</p>
+  <p class="info"><strong>Pontuação anual:</strong> 0</p>
+
+  <button id="logout">Sair</button>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } 
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDi2RDO0L_F24Gr9M7j1bCdpwEtMj5rRL4",
+    authDomain: "jogo-casal-2026-f4f3a.firebaseapp.com",
+    projectId: "jogo-casal-2026-f4f3a",
+    storageBucket: "jogo-casal-2026-f4f3a.firebasestorage.app",
+    messagingSenderId: "722928110476",
+    appId: "1:722928110476:web:f73d91d110f8b04f0f64a9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const usuarioSpan = document.getElementById("usuario");
+
+  // Verifica se o usuário está logado
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      usuarioSpan.innerText = user.email;
+    } else {
+      // Se não estiver logado, volta para a tela de login
+      window.location.href = "index.html";
+    }
+  });
+
+  // Logout
+  document.getElementById("logout").onclick = () => {
+    signOut(auth).then(() => {
+      window.location.href = "index.html";
+    });
+  };
+</script>
+
+</body>
+</html>
