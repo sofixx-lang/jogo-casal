@@ -67,7 +67,7 @@
 
     createUserWithEmailAndPassword(auth, email, senha)
       .then(() => {
-       window.location.href = "dashboard.html";
+        window.location.href = "dashboard.html";
       })
       .catch(error => {
         msg.innerText = "❌ " + error.message;
@@ -90,4 +90,3 @@
 
 </body>
 </html>
-
