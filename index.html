@@ -1,53 +1,91 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <title>Jogo do Casal 2026</title>
   <style>
-    body { font-family: Arial; background: #f5f5f5; padding: 30px; }
-    h1 { color: #333; }
-    .box { background: #fff; padding: 20px; border-radius: 8px; max-width: 400px; }
-    input, button { width: 100%; padding: 10px; margin-top: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 40px;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      max-width: 400px;
+      border-radius: 8px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    button {
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
-  <h1>🏆 Jogo do Casal 2026</h1>
+<h1>🏆 Jogo do Casal 2026</h1>
 
-  <div class="box">
-    <h3>Login</h3>
-   <input id="email" type="email" placeholder="Email">
-<input id="senha" type="password" placeholder="Senha">
-<button onclick="registrar()">Registrar</button>
-<button onclick="entrar()">Entrar</button>
+<div class="box">
+  <h3>Login</h3>
 
-  </div>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="senha" placeholder="Senha">
+
+  <button id="btnRegistrar">Registrar</button>
+  <button id="btnEntrar">Entrar</button>
+
+  <p id="msg"></p>
+</div>
+
+<!-- 🔥 SCRIPT CORRETO -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
-    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  const firebaseConfig = { 
-const app = initializeApp(firebaseConfig);
+  const firebaseConfig = {
+    apiKey: "AIzaSyDi2RDO0L_F24Gr9M7j1bCdpwEtMj5rRL4",
+    authDomain: "jogo-casal-2026-f4f3a.firebaseapp.com",
+    projectId: "jogo-casal-2026-f4f3a",
+    storageBucket: "jogo-casal-2026-f4f3a.firebasestorage.app",
+    messagingSenderId: "722928110476",
+    appId: "1:722928110476:web:f73d91d110f8b04f0f64a9"
+  };
+
+  const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  window.registrar = function () {
+  const msg = document.getElementById("msg");
+
+  document.getElementById("btnRegistrar").onclick = () => {
     const email = document.getElementById("email").value;
     const senha = document.getElementById("senha").value;
 
     createUserWithEmailAndPassword(auth, email, senha)
-      .then(() => alert("Usuário criado com sucesso"))
-      .catch(err => alert(err.message));
-  }
+      .then(() => {
+        msg.innerText = "✅ Usuário registrado com sucesso!";
+      })
+      .catch(error => {
+        msg.innerText = "❌ " + error.message;
+      });
+  };
 
-  window.entrar = function () {
+  document.getElementById("btnEntrar").onclick = () => {
     const email = document.getElementById("email").value;
     const senha = document.getElementById("senha").value;
 
     signInWithEmailAndPassword(auth, email, senha)
-      .then(() => alert("Login realizado"))
-      .catch(err => alert(err.message));
-  }
+      .then(() => {
+        msg.innerText = "🎉 Login realizado com sucesso!";
+      })
+      .catch(error => {
+        msg.innerText = "❌ " + error.message;
+      });
+  };
 </script>
 
 </body>
