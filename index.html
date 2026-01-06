@@ -1,152 +1,25 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <title>Jogo do Casal – Sofia x Daniel (Online)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  <meta charset="UTF-8">
+  <title>Jogo do Casal 2026</title>
   <style>
-    body { font-family: Arial, sans-serif; background:#f4f6f8; padding:20px; }
-    h1, h2 { color:#2c3e50; }
-    .card { background:#fff; padding:16px; margin-bottom:20px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,.1); }
-    button { padding:8px 12px; border:none; border-radius:6px; cursor:pointer; background:#3498db; color:#fff; }
-    input { padding:6px; margin:4px 0; }
+    body { font-family: Arial; background: #f5f5f5; padding: 30px; }
+    h1 { color: #333; }
+    .box { background: #fff; padding: 20px; border-radius: 8px; max-width: 400px; }
+    input, button { width: 100%; padding: 10px; margin-top: 10px; }
   </style>
 </head>
 <body>
 
-<h1>🎯 Jogo do Casal – Versão Online</h1>
+  <h1>🏆 Jogo do Casal 2026</h1>
 
-<div class="card">
-  <h2>🔐 Login</h2>
-  <input type="email" id="email" placeholder="Email" />
-  <input type="password" id="senha" placeholder="Senha" />
-  <br><br>
-  <button onclick="login()">Entrar</button>
-  <button onclick="registrar()">Registrar</button>
-  <p id="status"></p>
-</div>
-
-<div id="app" style="display:none">
-
-  <div class="card">
-    <h2>🏆 Pontuação</h2>
-    <p>Sofia — Semana: <span id="sSemana"></span> | Mês: <span id="sMes"></span> | Total: <span id="sTotal"></span></p>
-    <p>Daniel — Semana: <span id="dSemana"></span> | Mês: <span id="dMes"></span> | Total: <span id="dTotal"></span></p>
+  <div class="box">
+    <h3>Login</h3>
+    <input type="email" placeholder="Email">
+    <input type="password" placeholder="Senha">
+    <button>Entrar</button>
   </div>
-
-  <div class="card">
-    <h2>🏅 Vencedor do Mês</h2>
-    <p id="vencedorMes"></p>
-  </div>
-
-  <div class="card">
-    <h2>➕ Adicionar Pontos</h2>
-    <button onclick="addPoints(5)">+5</button>
-    <button onclick="addPoints(10)">+10</button>
-  </div>
-
-  <div class="card">
-    <h2>📈 Evolução</h2>
-    <canvas id="grafico"></canvas>
-  </div>
-
-</div>
-
-<script>
-  // CONFIGURAÇÃO FIREBASE (SUBSTITUIR)
-  const firebaseConfig = {
-    apiKey: "AIzaSyDi2RDO0L_F24Gr9M7j1bCdpwEtMj5rRL4",
-    authDomain: "jogo-casal-2026-f4f3a.firebaseapp.com",
-    projectId: "jogo-casal-2026-f4f3a",
-    storageBucket: "jogo-casal-2026-f4f3a.firebasestorage.app",
-    messagingSenderId: "722928110476",
-    appId: "1:722928110476:web:f73d91d110f8b04f0f64a9"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  let usuario = null;
-
-  auth.onAuthStateChanged(u => {
-    if (u) {
-      usuario = u.email.includes('sofia') ? 'sofia' : 'daniel';
-      document.getElementById('status').innerText = 'Logado como ' + usuario;
-      document.getElementById('app').style.display = 'block';
-      carregarDados();
-    }
-  });
-
-  function registrar() {
-    auth.createUserWithEmailAndPassword(email.value, senha.value);
-  }
-
-  function login() {
-    auth.signInWithEmailAndPassword(email.value, senha.value);
-  }
-
-  async function carregarDados() {
-    const ref = db.collection('jogo').doc('pontuacao');
-    const snap = await ref.get();
-    if (!snap.exists) {
-      await ref.set({
-        sofia:{ semana:0, mes:0, total:0, hist:[] },
-        daniel:{ semana:0, mes:0, total:0, hist:[] },
-        mesRef: new Date().getMonth()
-      });
-    }
-    atualizarTela();
-  }
-
-  async function addPoints(p) {
-    const ref = db.collection('jogo').doc('pontuacao');
-    await ref.update({
-      [`${usuario}.semana`]: firebase.firestore.FieldValue.increment(p),
-      [`${usuario}.mes`]: firebase.firestore.FieldValue.increment(p),
-      [`${usuario}.total`]: firebase.firestore.FieldValue.increment(p),
-      [`${usuario}.hist`]: firebase.firestore.FieldValue.arrayUnion({ data:new Date().toLocaleDateString(), pontos:p })
-    });
-    atualizarTela();
-  }
-
-  async function atualizarTela() {
-    const snap = await db.collection('jogo').doc('pontuacao').get();
-    const d = snap.data();
-
-    sSemana.innerText = d.sofia.semana;
-    sMes.innerText = d.sofia.mes;
-    sTotal.innerText = d.sofia.total;
-    dSemana.innerText = d.daniel.semana;
-    dMes.innerText = d.daniel.mes;
-    dTotal.innerText = d.daniel.total;
-
-    vencedorMes.innerText = d.sofia.mes === d.daniel.mes ? 'Empate' : d.sofia.mes > d.daniel.mes ? 'Sofia' : 'Daniel';
-
-    renderChart(d);
-  }
-
-  function renderChart(d) {
-    new Chart(document.getElementById('grafico'), {
-      type: 'line',
-      data: {
-        labels: d.sofia.hist.map(h=>h.data),
-        datasets: [
-          { label:'Sofia', data: d.sofia.hist.map(h=>h.pontos) },
-          { label:'Daniel', data: d.daniel.hist.map(h=>h.pontos) }
-        ]
-      }
-    });
-  }
-</script>
 
 </body>
 </html>
